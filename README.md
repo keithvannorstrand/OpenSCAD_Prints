@@ -1,0 +1,1 @@
+Playground for learning OpenSCAD and 3d printing on my Bambulab P1S
