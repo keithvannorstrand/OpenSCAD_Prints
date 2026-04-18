@@ -21,79 +21,132 @@ module mainBody2D(primaryDiameter, secondaryDiameter, shaftLength, wallThickness
                 square([extendedShaftLength, wallThickness*2], center=true);
             translate([primaryOuterRadius + shaftLength + secondaryOuterRadius, 0, 0])
                 ring2D(secondaryDiameter / 2, secondaryOuterRadius, 100);
-            hull() {
-                translate([-primaryDiameter + wallThickness/2, wallThickness/2, wallThickness/2])
-                    circle(r=wallThickness/3*2, $fn = 100);
-                translate([-primaryDiameter/3*2, wallThickness, wallThickness/2])
-                    square([wallThickness/3*2,wallThickness/3*2], center=true);
-            }
         }
         union() {
-            translate([fullLength/2 - primaryOuterRadius, -largestRadius/2, 0]) 
-                square([fullLength + wallThickness, largestRadius], center = true);
+            translate([fullLength/4, -largestRadius/2, 0]) 
+                square([fullLength + wallThickness*5, largestRadius], center = true);
             translate([-primaryDiameter + wallThickness/2, wallThickness/2, wallThickness/2])
                 circle(r = screwSize/2, $fn=100);
         }
     }
 }
 
-// TODO: First attempt at a reusable 2D hinge. Really not reusable
-/*
-    screwSize - Diameter of the hole for the hinge
-    r - Size of the circles used for creating the general shape of the hinge.
-*/
-module hinge2D(screwSize, r, fn) {
-    innerFn = is_undef(fn) ? 100 : fn;
-    difference() {
-        hull() {
-            // translate([r, r, 0]) circle(r/2, $fn=innerFn);
-            translate([r*2, -r/2, 0]) circle(r/2, $fn=innerFn);
-            translate([-r/2, r*1.5, 0]) circle(r, $fn=innerFn);
-        }
-        translate([-r/2, r*1.5, 0]) circle(screwSize/2, $fn=innerFn);
-    }
-    
-}
-
 /*
     primaryDiameter - Inner diameter of the first ring
     secondaryDiameter - Inner diameter of the second ring
-    shaftLenght - Length of connection between the rings
+    shaftLength - Length of connection between the rings
     wallThickness - Thickness of the rings and the height of the final 3d shape
     screwSize - Size (mm) of the screws that will be used for the latch and hinge
 */
 module topHalf(primaryDiameter, secondaryDiameter, shaftLength, wallThickness, screwSize) {
     fullLength = primaryDiameter + secondaryDiameter + shaftLength + wallThickness * 2;
+    primaryMidRadius = primaryDiameter/2 + wallThickness-1;
+    secondaryMidRadius = secondaryDiameter/2 + wallThickness - 1;
+    secondaryCenterX = primaryDiameter/2 + shaftLength + wallThickness*2 + secondaryDiameter/2;
 
-    translate([fullLength, screwSize * 2 , wallThickness/4])
-        rotate([0, 0, 180])
-            linear_extrude(height = wallThickness/2) 
-                hinge2D(screwSize = screwSize, r = wallThickness - 1);
+    // hinge 1/4 wallThickness - 3/4 wallThickness
+    translate([0,0, wallThickness/4])
+        linear_extrude(height = wallThickness/2) 
+            hinge2D(
+                mountCenter = [secondaryCenterX + cos(10) * secondaryMidRadius, sin(10) * secondaryMidRadius, 0],
+                screwCenter = [secondaryCenterX + secondaryDiameter/2 + wallThickness * 2, 0, 0],
+                screwSize = screwSize);
+
     linear_extrude(height = wallThickness) 
         mainBody2D(primaryDiameter, secondaryDiameter, shaftLength, wallThickness, screwSize = screwSize);
-
+    
+    // latch 0-1/4 wall thickness and 3/4-1 wallThickness
+    linear_extrude(height = wallThickness/4)
+        hinge2D(
+            mountCenter = [-primaryMidRadius * cos(10), primaryMidRadius * sin(10), 0],
+            screwCenter = [-(primaryDiameter/2 + wallThickness*2), screwSize, 0],
+            screwSize = screwSize,
+        );
+    translate([0, 0, wallThickness * 3/4])
+        linear_extrude(height = wallThickness/4)
+            hinge2D(
+                mountCenter = [-primaryMidRadius * cos(10), primaryMidRadius * sin(10), 0],
+                screwCenter = [-(primaryDiameter/2 + wallThickness*2), screwSize, 0],
+                screwSize = screwSize,
+            );
 }
 
 /*
     primaryDiameter - Inner diameter of the first ring
     secondaryDiameter - Inner diameter of the second ring
-    shaftLenght - Length of connection between the rings
+    shaftLength - Length of connection between the rings
     wallThickness - Thickness of the rings and the height of the final 3d shape
     screwSize - Size (mm) of the screws that will be used for the latch and hinge
 */
 module bottomHalf(primaryDiameter, secondaryDiameter, shaftLength, wallThickness, screwSize) {
     fullLength = primaryDiameter + secondaryDiameter + shaftLength + wallThickness * 2;
+    primaryMidRadius = primaryDiameter/2 + wallThickness-1;
+    midRadius = (secondaryDiameter/2 + wallThickness - 1);
+    secondaryCenterX = primaryDiameter/2 + shaftLength + wallThickness*2 + secondaryDiameter/2;
 
-    translate([fullLength, screwSize * 2 , 0])
-        rotate([0, 0, 180])
-            linear_extrude(height = wallThickness/4) 
-                hinge2D(screwSize = screwSize, r = wallThickness - 1);
-    translate([fullLength, screwSize * 2 , wallThickness*3/4])
-        rotate([0, 0, 180])
-            linear_extrude(height = wallThickness/4) 
-                hinge2D(screwSize = screwSize, r = wallThickness - 1);
+    linear_extrude(height = wallThickness/4) 
+        hinge2D(
+            mountCenter = [secondaryCenterX + cos(10) * midRadius, sin(10) * midRadius, 0],
+            screwCenter = [secondaryCenterX + secondaryDiameter/2 + wallThickness * 2, 0, 0],
+            screwSize = screwSize);
+    translate([0,0,wallThickness * 3/4])
+        linear_extrude(height = wallThickness/4) 
+            hinge2D(
+                mountCenter = [secondaryCenterX + cos(10) * midRadius, sin(10) * midRadius, 0],
+                screwCenter = [secondaryCenterX + secondaryDiameter/2 + wallThickness * 2, 0, 0],
+                screwSize = screwSize);
     linear_extrude(height = wallThickness) 
         mainBody2D(primaryDiameter, secondaryDiameter, shaftLength, wallThickness, screwSize = screwSize);
+
+    // latch 0-1/4 wall thickness and 3/4-1 wallThickness
+    linear_extrude(height = wallThickness/4)
+        hinge2D(
+            mountCenter = [-primaryMidRadius * cos(10), primaryMidRadius * sin(10), 0],
+            screwCenter = [-(primaryDiameter/2 + wallThickness*2), screwSize, 0],
+            screwSize = screwSize,
+        );
+    translate([0, 0, wallThickness * 3/4])
+        linear_extrude(height = wallThickness/4)
+            hinge2D(
+                mountCenter = [-primaryMidRadius * cos(10), primaryMidRadius * sin(10), 0],
+                screwCenter = [-(primaryDiameter/2 + wallThickness*2), screwSize, 0],
+                screwSize = screwSize,
+            );
+}
+
+// necessary latch parameters
+// screwSpacing - distance between center of each screw.
+// wallThickness - Something to determine how thick the wall is on the latch
+// screwDiameter - 
+// handleSize - Not sure on this but the size of the little tab to help open the latch
+module latch2D(
+    screwSpacing,
+    wallThickness,
+    screwDiameter,
+    handleSize
+) {
+    screwLatchTolerance = 0.02;
+    difference() {
+        // main body
+        hull() {
+            circle(r=screwDiameter/2 + wallThickness, $fn=50);
+            translate([0, screwSpacing, 0])
+                circle(r=screwDiameter/2 + wallThickness, $fn=50);
+        }
+        // screw hole
+        circle(r=screwDiameter/2, $fn=100);
+        // latching side hole
+        translate([0, screwSpacing, 0])
+            circle(r=screwDiameter/2 + screwLatchTolerance, $fn=100);
+        // main body cutout
+        translate([screwDiameter/2 * cos(45), screwDiameter/2 * sin(45), 0])
+            rotate([0, 0, 135])
+                #square([6.5, screwDiameter]);
+        // round out the latch edge
+        translate([screwDiameter/2 * cos(135), screwDiameter/2 * sin(135), 0])
+            rotate([0, 0, 120])
+                #square([2, 4]);
+    }
 }
 
 topHalf(
@@ -104,7 +157,7 @@ topHalf(
     screwSize = 3
 );
 
-translate([0,-20,thickness])
+translate([0,-0,thickness])
     rotate([180,0,0])
         bottomHalf(
             primaryDiameter = basketDiameter,
@@ -114,11 +167,22 @@ translate([0,-20,thickness])
             screwSize = 3
         );
 
-standardLatch2D(
-    latchSupportTotalWidth = thickness,
-    latchSupportWidth = thickness - 2,
-    latchScrewPositionPct = 80,
-    latchSupportRadius = 4,
-    latchTolerance = 0.1,
-    openingTolerance = 0.1
-);
+// standardLatch2D(
+//     latchSupportTotalWidth = thickness,
+//     latchSupportWidth = thickness - 2,
+//     latchScrewPositionPct = 80,
+//     latchSupportRadius = 4,
+//     latchTolerance = 0.1,
+//     openingTolerance = 0.1,
+//     screwRadius = 1.5
+// );
+
+
+translate([-32, -3, 0])
+    linear_extrude(height = thickness / 2)
+        latch2D(
+            screwSpacing = 3*2,
+            wallThickness = 2,
+            screwDiameter = 3,
+            handleSize = 4
+        );
