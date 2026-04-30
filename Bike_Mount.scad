@@ -117,47 +117,6 @@ module bottomHalf(primaryDiameter, secondaryDiameter, shaftLength, wallThickness
             );
 }
 
-// necessary latch parameters
-// screwSpacing - distance between center of each screw.
-// wallThickness - Something to determine how thick the wall is on the latch
-// screwDiameter - 
-// handleSize - Not sure on this but the size of the little tab to help open the latch
-module latch2D(
-    screwSpacing,
-    wallThickness,
-    screwDiameter,
-    handleSize
-) {
-    screwLatchTolerance = 0.1;
-    difference() {
-        // main body
-        union() {
-            hull() {
-                circle(r=screwDiameter/2 + wallThickness, $fn=50);
-                translate([0, screwSpacing, 0])
-                    circle(r=screwDiameter/2 + wallThickness, $fn=50);
-            }
-            translate([screwDiameter/2 * cos(-15), screwDiameter/2 * sin(-15) - handleSize, 0])
-                square([wallThickness, handleSize]);
-            translate([(screwDiameter/2 + wallThickness/2) * cos(-12), screwDiameter/2 - wallThickness - handleSize, 0])
-                circle(r=wallThickness/2, $fn=100);
-        }
-        // screw hole
-        circle(r=screwDiameter/2, $fn=100);
-        // latching side hole
-        translate([0, screwSpacing, 0])
-            circle(r=screwDiameter/2 + screwLatchTolerance, $fn=100);
-        // main body cutout
-        translate([screwDiameter/2 * cos(45), screwDiameter/2 * sin(45), 0])
-            rotate([0, 0, 135])
-                #square([6.5, screwDiameter]);
-        // round out the latch edge
-        translate([screwDiameter/2 * cos(135), screwDiameter/2 * sin(135), 0])
-            rotate([0, 0, 120])
-                #square([2, 4]);
-    }
-}
-
 topHalf(
     primaryDiameter = basketDiameter,
     secondaryDiameter = bikeDiameter,
@@ -177,17 +136,6 @@ translate([0,-20,thickness])
             height = height,
             screwSize = 3
         );
-
-// standardLatch2D(
-//     latchSupportTotalWidth = thickness,
-//     latchSupportWidth = thickness - 2,
-//     latchScrewPositionPct = 80,
-//     latchSupportRadius = 4,
-//     latchTolerance = 0.1,
-//     openingTolerance = 0.1,
-//     screwRadius = 1.5
-// );
-
 
 translate([-60, -3, 0])
     linear_extrude(height = thickness / 2 - 1)
