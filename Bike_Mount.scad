@@ -137,8 +137,10 @@ module latch2D(
                 translate([0, screwSpacing, 0])
                     circle(r=screwDiameter/2 + wallThickness, $fn=50);
             }
-            translate([screwDiameter/2 * cos(45), screwDiameter/2 * sin(45) -10, 0])
-                square([3,12]);
+            translate([screwDiameter/2 * cos(-15), screwDiameter/2 * sin(-15) - handleSize, 0])
+                square([wallThickness, handleSize]);
+            translate([(screwDiameter/2 + wallThickness/2) * cos(-12), screwDiameter/2 - wallThickness - handleSize, 0])
+                circle(r=wallThickness/2, $fn=100);
         }
         // screw hole
         circle(r=screwDiameter/2, $fn=100);
@@ -193,5 +195,5 @@ translate([-60, -3, 0])
             screwSpacing = 3*4,
             wallThickness = 2,
             screwDiameter = 3,
-            handleSize = 4
+            handleSize = 6
         );
