@@ -3,8 +3,8 @@ use <./Utilities/2D_Shapes.scad>;
 basketDiameter = 31;
 bikeDiameter = 31;
 length = 10;
-thickness = 20;
-height = 10;
+thickness = 10;
+height = 20;
 
 module mainBody2D(primaryDiameter, secondaryDiameter, shaftLength, wallThickness, screwSize) {
     primaryOuterRadius = primaryDiameter/2 + wallThickness;
@@ -126,7 +126,7 @@ topHalf(
     screwSize = 3
 );
 
-translate([0,-20,thickness])
+translate([0,-20,height])
     rotate([180,0,0])
         bottomHalf(
             primaryDiameter = basketDiameter,
@@ -138,7 +138,7 @@ translate([0,-20,thickness])
         );
 
 translate([-60, -3, 0])
-    linear_extrude(height = thickness / 2 - 1)
+    linear_extrude(height = height / 2 - 1)
         latch2D(
             screwSpacing = 3*4,
             wallThickness = 2,

@@ -9,7 +9,7 @@ module ring2D(innerRadius, outerRadius, fn) {
 module hinge2D(mountCenter, mountCenter2, screwCenter, screwSize, fn) {
     innerFn = is_undef(fn) ? 100 : fn;
     innerMountCenter = is_undef(mountCenter) ? [0,0,0] : mountCenter;
-    r = screwSize * 0.8;
+    r = screwSize * 1.2;
     if (is_undef(mountCenter2)) {
         difference() {
             hull() {
