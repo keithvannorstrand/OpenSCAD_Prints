@@ -41,7 +41,7 @@ module latch2D(
     screwDiameter,
     handleSize
 ) {
-    screwLatchTolerance = 0.1;
+    screwLatchTolerance = 0.2;
     difference() {
         // main body
         union() {
@@ -52,21 +52,21 @@ module latch2D(
             }
             translate([screwDiameter/2 * cos(-15), screwDiameter/2 * sin(-15) - handleSize, 0])
                 square([wallThickness, handleSize]);
-            translate([(screwDiameter/2 + wallThickness/2) * cos(-12), screwDiameter/2 - wallThickness - handleSize, 0])
+            translate([(screwDiameter/2 + wallThickness/2) * cos(-12), -handleSize, 0])
                 circle(r=wallThickness/2, $fn=100);
         }
         // screw hole
-        circle(r=screwDiameter/2, $fn=100);
+        circle(r=screwDiameter/2 + screwLatchTolerance, $fn=100);
         // latching side hole
         translate([0, screwSpacing, 0])
             circle(r=screwDiameter/2 + screwLatchTolerance, $fn=100);
         // main body cutout
         translate([screwDiameter/2 * cos(45), screwDiameter/2 * sin(45), 0])
             rotate([0, 0, 135])
-                #square([6.5, screwDiameter]);
+                #square([wallThickness * 3, screwDiameter]);
         // round out the latch edge
         translate([screwDiameter/2 * cos(135), screwDiameter/2 * sin(135), 0])
             rotate([0, 0, 120])
-                #square([2, 4]);
+                #square([wallThickness, wallThickness * 2]);
     }
 }

@@ -141,7 +141,7 @@ translate([-60, -3, 0])
     linear_extrude(height = height / 2 - 1)
         latch2D(
             screwSpacing = 3*4,
-            wallThickness = 2,
+            wallThickness = 3,
             screwDiameter = 3,
             handleSize = 6
         );
