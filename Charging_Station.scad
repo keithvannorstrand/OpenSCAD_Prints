@@ -58,20 +58,26 @@ module boxLid(x, y, wallThickness, cutoutSize, cutoutSpacing) {
 
 }
 
-mainBox(
-  width = 130,
-  length = 150,
-  height = 20,
-  wallThickness = 5,
-  cutoutSpacing = 20,
-  outletCutoutWidth = 20
-);
-
-translate([150, 150, 0])
-  boxLid(
-    x = 130,
-    y = 150,
+minkowski() {
+  mainBox(
+    width = 130,
+    length = 150,
+    height = 20,
     wallThickness = 5,
-    cutoutSize = 5,
-    cutoutSpacing = 20
+    cutoutSpacing = 20,
+    outletCutoutWidth = 20
   );
+  sphere(r=1);
+}
+
+minkowski() {
+  translate([150, 150, 0])
+    boxLid(
+      x = 130,
+      y = 150,
+      wallThickness = 5,
+      cutoutSize = 5,
+      cutoutSpacing = 20
+    );
+  sphere(r=1);
+}
