@@ -29,18 +29,18 @@ module mainBox(x, y, height, wallThickness, cutoutSpacing, cutoutWidth, chargerX
     translate([wallThickness, wallThickness, wallThickness])
       #cube([innerX, innerY, innerHeight + slotOverhang]);
     // side slots
-    for (x = [wallThickness : cutoutSpacing : innerX]) {
-      translate([x, -slotOverhang/2, wallThickness])
-        #cube([cutoutWidth, wallThickness + slotOverhang, innerHeight - wallThickness]);
-      translate([x, outerY - wallThickness - slotOverhang/2, wallThickness])
-        #cube([cutoutWidth, wallThickness + slotOverhang, innerHeight - wallThickness]);
+    for (x = [wallThickness + cutoutWidth/2 : cutoutSpacing : innerX]) {
+      translate([x, -slotOverhang/2, wallThickness * 1.5])
+        #cube([cutoutWidth, wallThickness + slotOverhang, innerHeight - wallThickness * 2]);
+      translate([x, outerY - wallThickness - slotOverhang/2, wallThickness * 1.5])
+        #cube([cutoutWidth, wallThickness + slotOverhang, innerHeight - wallThickness * 2]);
     }
     // Power cord cutout
     translate([0 - slotOverhang/2, outerY/2 - outletCutoutWidth/2, wallThickness])
       #cube([wallThickness + slotOverhang, outletCutoutWidth, innerHeight - wallThickness]);
   }
   
-  translate([wallThickness, wallThickness + (innerY - chargerY)/2, wallThickness])
+  translate([wallThickness, (wallThickness + innerY - chargerY)/2, wallThickness])
     difference() {
         cube([chargerX + wallThickness, chargerY + wallThickness, chargerHeight]);
         translate([0, wallThickness/2, 0])
@@ -61,37 +61,40 @@ module boxLid(x, y, wallThickness, cutoutSize, cutoutSpacing) {
         cube([x - minkowskiRadius * 2, y - minkowskiRadius * 2, fullHeight]);
     }
     // cutouts for top dividers
-    for (cutoutX = [wallThickness : cutoutSpacing : outerX]) {
+    for (cutoutX = [wallThickness * 3 : cutoutSpacing : outerX]) {
       translate([cutoutX + minkowskiRadius, wallThickness + minkowskiRadius, -cutoutOverhang/2])
         #cube([cutoutSize + minkowskiRadius, cutoutSize + minkowskiRadius, fullHeight + cutoutOverhang]);
-      translate([cutoutX + minkowskiRadius, outerY - wallThickness - cutoutSize - minkowskiRadius, -cutoutOverhang/2])
+      translate([cutoutX + minkowskiRadius, outerY - wallThickness - cutoutSize - minkowskiRadius * 2, -cutoutOverhang/2])
+        #cube([cutoutSize + minkowskiRadius, cutoutSize + minkowskiRadius, fullHeight + cutoutOverhang]);
+        translate([cutoutX + minkowskiRadius, (outerY - wallThickness - cutoutSize - minkowskiRadius * 2)/2, -cutoutOverhang/2])
         #cube([cutoutSize + minkowskiRadius, cutoutSize + minkowskiRadius, fullHeight + cutoutOverhang]);
     }
   }
 
 }
 
+/*
 minkowski() {
   mainBox(
-    x = 150,
+    x = 180,
     y = 150,
-    height = 35,
+    height = 32,
     wallThickness = 3,
     cutoutSpacing = 20,
-    cutoutWidth = 8,
+    cutoutWidth = 10,
     chargerX = 80,
     chargerY = 130,
-    chargerHeight = 5,
+    chargerHeight = 8,
     outletCutoutWidth = 20
   );
   sphere(r=minkowskiRadius);
 }
-
+*/
 
 minkowski() {
   translate([0, 180, 0])
     boxLid(
-      x = 150,
+      x = 180,
       y = 150,
       wallThickness = 2,
       cutoutSize = 5,
