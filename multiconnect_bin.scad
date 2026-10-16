@@ -159,6 +159,7 @@ module makebackPlate(backWidth, backHeight, distanceBetweenSlots, backThickness,
                 //Loop through slots and center on the item
                 //Note: I kept doing math until it looked right. It's possible this can be simplified.
                 for (slotNum = [0:1:slotCount-1]) {
+                echo("Slot Count:", slotCount, subtractedSlots);
                     translate(v = [distanceBetweenSlots/2+(backWidth/distanceBetweenSlots-slotCount)*distanceBetweenSlots/2+slotNum*distanceBetweenSlots,-2.35+slotDepthMicroadjustment,backHeight-Multiconnect_Stop_Distance_From_Back]) {
                         if(Connection_Standard == "Multipoint"){
                             multiPointSlotTool(totalHeight);
